@@ -1,7 +1,7 @@
-import { Router } from 'express';
-import { supabase } from '../services/supabaseClient.js';
-import { getWeatherData } from '../services/weatherService.js';
-import { optionalAuth, requireAuth, requireAdmin } from './auth.js';
+const { Router } = require('express');
+const { supabase } = require('../services/supabaseClient.js');
+const { getWeatherData } = require('../services/weatherService.js');
+const { optionalAuth, requireAuth, requireAdmin } = require('./auth.js');
 
 const router = Router();
 
@@ -188,4 +188,4 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

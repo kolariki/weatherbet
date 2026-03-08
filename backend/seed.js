@@ -1,4 +1,4 @@
-import { supabase } from './services/supabaseClient.js';
+const { supabase } = require('./services/supabaseClient.js');
 
 const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);

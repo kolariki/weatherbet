@@ -1,8 +1,8 @@
-import cron from 'node-cron';
-import { supabase } from './supabaseClient.js';
-import { getWeatherData, evaluateCondition } from './weatherService.js';
+const cron = require('node-cron');
+const { supabase } = require('./supabaseClient.js');
+const { getWeatherData, evaluateCondition } = require('./weatherService.js');
 
-export function startResolver() {
+function startResolver() {
   // Run every 30 minutes
   cron.schedule('*/30 * * * *', async () => {
     console.log('[Resolver] Running market resolution check...');
@@ -12,7 +12,7 @@ export function startResolver() {
   console.log('[Resolver] Scheduled — runs every 30 minutes');
 }
 
-export async function resolveMarkets() {
+async function resolveMarkets() {
   try {
     const now = new Date().toISOString();
 
@@ -165,3 +165,5 @@ async function resolveMarket(market) {
 
   console.log(`[Resolver] Market #${market.id} resolved: ${winningSide} wins. ${winners.length} winners, ${losers.length} losers.`);
 }
+
+module.exports = { startResolver, resolveMarkets };

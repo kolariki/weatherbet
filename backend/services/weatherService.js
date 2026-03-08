@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient.js';
+const { supabase } = require('./supabaseClient.js');
 
 const API_KEY = process.env.OPENWEATHER_API_KEY;
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
@@ -6,7 +6,7 @@ const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 const cache = new Map();
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
-export async function getWeatherData(city, countryCode = 'MX') {
+async function getWeatherData(city, countryCode = 'MX') {
   const cacheKey = `${city}-${countryCode}`;
   const cached = cache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -63,7 +63,7 @@ export async function getWeatherData(city, countryCode = 'MX') {
   }
 }
 
-export function evaluateCondition(value, operator, threshold) {
+function evaluateCondition(value, operator, threshold) {
   switch (operator) {
     case '>': return value > threshold;
     case '<': return value < threshold;
@@ -73,3 +73,5 @@ export function evaluateCondition(value, operator, threshold) {
     default: return false;
   }
 }
+
+module.exports = { getWeatherData, evaluateCondition };

@@ -1,13 +1,11 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import authRoutes from './routes/auth.js';
-import marketRoutes from './routes/markets.js';
-import betRoutes from './routes/bets.js';
-import walletRoutes from './routes/wallet.js';
-import { startResolver } from './services/resolverService.js';
-
-dotenv.config();
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
+const authRoutes = require('./routes/auth.js');
+const marketRoutes = require('./routes/markets.js');
+const betRoutes = require('./routes/bets.js');
+const walletRoutes = require('./routes/wallet.js');
+const { startResolver } = require('./services/resolverService.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;

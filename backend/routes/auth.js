@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import { supabase, verifyToken, getProfile } from '../services/supabaseClient.js';
+const { Router } = require('express');
+const { supabase, verifyToken, getProfile } = require('../services/supabaseClient.js');
 
 const router = Router();
 
 // Middleware to extract user (optional — doesn't block if no token)
-export async function optionalAuth(req, res, next) {
+async function optionalAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.slice(7);
@@ -18,7 +18,7 @@ export async function optionalAuth(req, res, next) {
 }
 
 // Middleware to require auth
-export async function requireAuth(req, res, next) {
+async function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Token de autenticación requerido' });
@@ -40,7 +40,7 @@ export async function requireAuth(req, res, next) {
 }
 
 // Middleware to require admin
-export async function requireAdmin(req, res, next) {
+async function requireAdmin(req, res, next) {
   if (!req.profile?.is_admin) {
     return res.status(403).json({ error: 'Se requieren permisos de administrador' });
   }
@@ -96,4 +96,7 @@ router.get('/leaderboard', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
+module.exports.optionalAuth = optionalAuth;
+module.exports.requireAuth = requireAuth;
+module.exports.requireAdmin = requireAdmin;

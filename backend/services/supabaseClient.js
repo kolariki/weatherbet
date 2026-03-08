@@ -1,6 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
-dotenv.config();
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
@@ -10,20 +9,20 @@ if (!supabaseUrl || !supabaseServiceKey) {
   process.exit(1);
 }
 
-export const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false,
   },
 });
 
-export async function verifyToken(token) {
+async function verifyToken(token) {
   const { data: { user }, error } = await supabase.auth.getUser(token);
   if (error || !user) return null;
   return user;
 }
 
-export async function getProfile(userId) {
+async function getProfile(userId) {
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
@@ -32,3 +31,5 @@ export async function getProfile(userId) {
   if (error) return null;
   return data;
 }
+
+module.exports = { supabase, verifyToken, getProfile };

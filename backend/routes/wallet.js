@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import { supabase } from '../services/supabaseClient.js';
-import { requireAuth } from './auth.js';
+const { Router } = require('express');
+const { supabase } = require('../services/supabaseClient.js');
+const { requireAuth } = require('./auth.js');
 
 const router = Router();
 
@@ -79,4 +79,4 @@ router.post('/claim-daily', requireAuth, async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
