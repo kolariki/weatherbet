@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
-  Home, Wallet, User, Trophy, LogOut, Menu, X, TrendingUp, Coins,
+  Home, Wallet, User, Trophy, LogOut, TrendingUp, Coins, ChevronDown,
 } from 'lucide-react';
 import WalletConnect from './WalletConnect';
 
@@ -14,144 +14,175 @@ const navItems = [
 ];
 
 export default function Layout({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
   const { user, profile, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
+    setProfileOpen(false);
     await signOut();
     navigate('/login');
   };
 
   const filteredNav = navItems.filter((item) => !item.auth || user);
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e) {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#0b0e11] flex">
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-[#161a1e] border-r border-[#2b3139] flex flex-col transition-transform duration-300 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
-      >
-        {/* Logo */}
-        <div className="p-6 border-b border-[#2b3139]">
-          <Link to="/" className="flex items-center gap-3" onClick={() => setSidebarOpen(false)}>
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold gradient-text">BetAll</h1>
-              <p className="text-[10px] text-[#5e6673] -mt-0.5">Mercado de Predicciones</p>
-            </div>
-          </Link>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1">
-          {filteredNav.map((item) => {
-            const Icon = item.icon;
-            const active = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  active
-                    ? 'bg-[#00b8d4]/10 text-[#00b8d4] border border-[#00b8d4]/20'
-                    : 'text-[#848e9c] hover:text-[#eaecef] hover:bg-[#1e2329]'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User info */}
-        {user && (
-          <div className="p-4 border-t border-[#2b3139]">
-            <div className="glass-card p-3">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center text-xs font-bold text-white">
-                  {profile?.username?.[0]?.toUpperCase() || '?'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[#eaecef] truncate">{profile?.username || 'Usuario'}</p>
-                  <p className="text-xs text-[#848e9c] flex items-center gap-1">
-                    <Coins className="w-3 h-3 text-yellow-400" />
-                    {(profile?.balance_credits || 0).toLocaleString()}
-                  </p>
-                </div>
+    <div className="min-h-screen bg-[#0b0e11]">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-[#161a1e] border-b border-[#2b3139]">
+        <div className="flex items-center justify-between px-4 lg:px-6 h-14 max-w-[1400px] mx-auto">
+          {/* Left: Logo + Nav */}
+          <div className="flex items-center gap-6">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2.5 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 text-white" />
               </div>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-2 text-xs text-[#848e9c] hover:text-[#f6465d] transition-colors w-full px-1"
-              >
-                <LogOut className="w-3 h-3" />
-                Cerrar sesión
-              </button>
-            </div>
-          </div>
-        )}
-
-        {!user && (
-          <div className="p-4 border-t border-[#2b3139]">
-            <Link
-              to="/login"
-              onClick={() => setSidebarOpen(false)}
-              className="btn-primary block text-center text-sm"
-            >
-              Iniciar Sesión
+              <span className="text-lg font-bold gradient-text hidden sm:block">BetAll</span>
             </Link>
+
+            {/* Nav links */}
+            <nav className="flex items-center gap-1">
+              {filteredNav.map((item) => {
+                const Icon = item.icon;
+                const active = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      active
+                        ? 'text-[#00b8d4] bg-[#00b8d4]/10'
+                        : 'text-[#848e9c] hover:text-[#eaecef] hover:bg-[#1e2329]'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="hidden md:inline">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
-        )}
-      </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-[#0b0e11] border-b border-[#2b3139]">
-          <div className="flex items-center justify-between px-4 lg:px-8 h-16">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-[#848e9c] hover:text-[#eaecef]"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+          {/* Right: Credits + Wallet + Profile */}
+          <div className="flex items-center gap-3">
+            {/* Credits badge */}
+            {user && profile && (
+              <div className="flex items-center gap-1.5 bg-[#1e2329] border border-[#2b3139] rounded-lg px-3 py-1.5">
+                <Coins className="w-3.5 h-3.5 text-[#00b8d4]" />
+                <span className="text-sm font-semibold text-[#eaecef]">
+                  {profile.balance_credits.toLocaleString()}
+                </span>
+              </div>
+            )}
 
-            <div className="flex-1" />
+            {/* Wallet connect */}
+            <WalletConnect compact />
 
-            <div className="flex items-center gap-3">
-              {user && profile && (
-                <div className="flex items-center gap-2 glass-card px-4 py-2">
-                  <Coins className="w-4 h-4 text-yellow-400" />
-                  <span className="text-sm font-semibold text-[#eaecef]">
-                    {profile.balance_credits.toLocaleString()}
-                  </span>
-                  <span className="text-xs text-[#848e9c]">créditos</span>
-                </div>
-              )}
-              <WalletConnect compact />
-            </div>
+            {/* Profile dropdown */}
+            {user && profile ? (
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="flex items-center gap-2 hover:bg-[#1e2329] rounded-lg px-2 py-1.5 transition-all"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center text-xs font-bold text-white">
+                    {profile?.username?.[0]?.toUpperCase() || '?'}
+                  </div>
+                  <ChevronDown className={`w-3.5 h-3.5 text-[#848e9c] transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Dropdown */}
+                {profileOpen && (
+                  <div className="absolute right-0 top-12 w-64 bg-[#161a1e] border border-[#2b3139] rounded-lg shadow-xl shadow-black/40 overflow-hidden z-50">
+                    {/* User info */}
+                    <div className="p-4 border-b border-[#2b3139]">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center text-sm font-bold text-white">
+                          {profile?.username?.[0]?.toUpperCase() || '?'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-[#eaecef] truncate">{profile?.username || 'Usuario'}</p>
+                          <p className="text-xs text-[#848e9c] truncate">{user?.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 mt-3 bg-[#1e2329] rounded-lg px-3 py-2">
+                        <Coins className="w-4 h-4 text-[#00b8d4]" />
+                        <span className="text-sm font-bold text-[#eaecef]">{(profile?.balance_credits || 0).toLocaleString()}</span>
+                        <span className="text-xs text-[#5e6673]">créditos</span>
+                      </div>
+                    </div>
+
+                    {/* Menu items */}
+                    <div className="p-2">
+                      <Link
+                        to="/profile"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#848e9c] hover:text-[#eaecef] hover:bg-[#1e2329] transition-all"
+                      >
+                        <User className="w-4 h-4" />
+                        Mi Perfil
+                      </Link>
+                      <Link
+                        to="/wallet"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#848e9c] hover:text-[#eaecef] hover:bg-[#1e2329] transition-all"
+                      >
+                        <Wallet className="w-4 h-4" />
+                        Billetera
+                      </Link>
+                      <Link
+                        to="/leaderboard"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#848e9c] hover:text-[#eaecef] hover:bg-[#1e2329] transition-all"
+                      >
+                        <Trophy className="w-4 h-4" />
+                        Ranking
+                      </Link>
+                    </div>
+
+                    {/* Sign out */}
+                    <div className="p-2 border-t border-[#2b3139]">
+                      <button
+                        onClick={handleSignOut}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#f6465d] hover:bg-[#f6465d]/10 transition-all w-full"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Cerrar sesión
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="btn-primary text-sm px-4 py-2"
+              >
+                Iniciar Sesión
+              </Link>
+            )}
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Page content */}
-        <main className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
-          {children}
-        </main>
-      </div>
+      {/* Page content */}
+      <main className="p-4 lg:p-8 max-w-[1400px] mx-auto w-full">
+        {children}
+      </main>
     </div>
   );
 }
