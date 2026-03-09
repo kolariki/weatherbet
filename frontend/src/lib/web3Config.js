@@ -52,8 +52,8 @@ export const TARGET_CHAIN = TARGET_CHAIN_ID === 84532 ? baseSepolia : base;
 
 // Wagmi + RainbowKit config
 export const wagmiConfig = getDefaultConfig({
-  appName: 'WeatherBet',
-  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || 'weatherbet-dev',
+  appName: 'BetAll',
+  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '7d586ae634cbc604e98634f43778eced',
   chains: [TARGET_CHAIN],
   transports: {
     [base.id]: http('https://mainnet.base.org'),
