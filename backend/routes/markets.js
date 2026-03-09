@@ -2,6 +2,7 @@ const { Router } = require('express');
 const { supabase } = require('../services/supabaseClient.js');
 const { getWeatherData } = require('../services/weatherService.js');
 const { optionalAuth, requireAuth, requireAdmin } = require('./auth.js');
+const { getPrices, INITIAL_LIQUIDITY } = require('../services/ammService.js');
 
 const router = Router();
 
@@ -34,32 +35,19 @@ router.get('/', optionalAuth, async (req, res) => {
     const { data: markets, error } = await query;
     if (error) throw error;
 
-    // Calculate pools from positions for each market
-    const marketsWithPools = await Promise.all(
-      (markets || []).map(async (market) => {
-        const { data: positions } = await supabase
-          .from('positions')
-          .select('side, amount')
-          .eq('market_id', market.id);
+    // Calculate AMM prices for each market
+    const marketsWithPools = (markets || []).map((market) => {
+      const yesLiq = market.yes_liquidity || INITIAL_LIQUIDITY;
+      const noLiq = market.no_liquidity || INITIAL_LIQUIDITY;
+      const prices = getPrices(yesLiq, noLiq);
+      const totalPool = (market.yes_pool || 0) + (market.no_pool || 0);
 
-        const yesPool = (positions || [])
-          .filter((p) => p.side === 'YES')
-          .reduce((sum, p) => sum + p.amount, 0);
-        const noPool = (positions || [])
-          .filter((p) => p.side === 'NO')
-          .reduce((sum, p) => sum + p.amount, 0);
-        const totalPool = yesPool + noPool;
-
-        return {
-          ...market,
-          yes_pool: yesPool,
-          no_pool: noPool,
-          total_pool: totalPool,
-          yes_percentage: totalPool > 0 ? Math.round((yesPool / totalPool) * 100) : 50,
-          no_percentage: totalPool > 0 ? Math.round((noPool / totalPool) * 100) : 50,
-        };
-      })
-    );
+      return {
+        ...market,
+        total_pool: totalPool,
+        ...prices,
+      };
+    });
 
     res.json(marketsWithPools);
   } catch (error) {
@@ -90,27 +78,41 @@ router.get('/:id', optionalAuth, async (req, res) => {
       .eq('market_id', id)
       .order('created_at', { ascending: false });
 
-    const yesPool = (positions || [])
-      .filter((p) => p.side === 'YES')
-      .reduce((sum, p) => sum + p.amount, 0);
-    const noPool = (positions || [])
-      .filter((p) => p.side === 'NO')
-      .reduce((sum, p) => sum + p.amount, 0);
-    const totalPool = yesPool + noPool;
+    const yesLiq = market.yes_liquidity || INITIAL_LIQUIDITY;
+    const noLiq = market.no_liquidity || INITIAL_LIQUIDITY;
+    const prices = getPrices(yesLiq, noLiq);
+    const totalPool = (market.yes_pool || 0) + (market.no_pool || 0);
 
-    // User's position if authenticated
+    // User's positions if authenticated
     let userPosition = null;
     if (req.user) {
       const { data: userPositions } = await supabase
         .from('positions')
         .select('*')
         .eq('market_id', id)
-        .eq('user_id', req.user.id);
+        .eq('user_id', req.user.id)
+        .eq('status', 'active');
 
       if (userPositions && userPositions.length > 0) {
+        const totalShares = { YES: 0, NO: 0 };
+        const totalSpent = { YES: 0, NO: 0 };
+        userPositions.forEach(p => {
+          totalShares[p.side] += p.shares || p.amount;
+          totalSpent[p.side] += p.amount;
+        });
+
+        // Current value based on AMM price
+        const currentValue =
+          totalShares.YES * prices.yes_price +
+          totalShares.NO * prices.no_price;
+
         userPosition = {
-          total_amount: userPositions.reduce((sum, p) => sum + p.amount, 0),
           positions: userPositions,
+          total_shares_yes: totalShares.YES,
+          total_shares_no: totalShares.NO,
+          total_spent: totalSpent.YES + totalSpent.NO,
+          current_value: parseFloat(currentValue.toFixed(2)),
+          profit_loss: parseFloat((currentValue - totalSpent.YES - totalSpent.NO).toFixed(2)),
         };
       }
     }
@@ -135,11 +137,8 @@ router.get('/:id', optionalAuth, async (req, res) => {
 
     res.json({
       ...market,
-      yes_pool: yesPool,
-      no_pool: noPool,
       total_pool: totalPool,
-      yes_percentage: totalPool > 0 ? Math.round((yesPool / totalPool) * 100) : 50,
-      no_percentage: totalPool > 0 ? Math.round((noPool / totalPool) * 100) : 50,
+      ...prices,
       user_position: userPosition,
       recent_positions: recentPositions,
       current_weather: currentWeather,

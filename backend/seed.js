@@ -17,6 +17,8 @@ resolvesAfter.setHours(23, 0, 0, 0);
 const markets = [
   {
     question: '¿Temperatura máxima en Buenos Aires > 30°C mañana?',
+    yes_liquidity: 1000,
+    no_liquidity: 1000,
     description: 'Se resuelve con la temperatura máxima registrada en CABA.',
     city: 'Buenos Aires',
     country_code: 'AR',
