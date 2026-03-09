@@ -64,7 +64,7 @@ export default function Wallet() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#00b8d4]" />
       </div>
     );
   }
@@ -72,10 +72,10 @@ export default function Wallet() {
   const canClaim = !cooldownText;
 
   const typeConfig = {
-    bet: { icon: ArrowDownRight, color: 'text-red-400', label: 'Apuesta', prefix: '' },
-    win: { icon: ArrowUpRight, color: 'text-emerald-400', label: 'Ganancia', prefix: '+' },
-    daily_claim: { icon: Gift, color: 'text-purple-400', label: 'Créditos diarios', prefix: '+' },
-    refund: { icon: ArrowUpRight, color: 'text-blue-400', label: 'Reembolso', prefix: '+' },
+    bet: { icon: ArrowDownRight, color: 'text-[#f6465d]', label: 'Apuesta', prefix: '' },
+    win: { icon: ArrowUpRight, color: 'text-[#2ebd85]', label: 'Ganancia', prefix: '+' },
+    daily_claim: { icon: Gift, color: 'text-[#00b8d4]', label: 'Créditos diarios', prefix: '+' },
+    refund: { icon: ArrowUpRight, color: 'text-[#00b8d4]', label: 'Reembolso', prefix: '+' },
   };
 
   return (
@@ -85,24 +85,24 @@ export default function Wallet() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Balance card */}
         <div className="glass-card p-8">
-          <p className="text-sm text-gray-400 mb-2">Balance actual</p>
+          <p className="text-sm text-[#848e9c] mb-2">Balance actual</p>
           <div className="flex items-center gap-3">
             <Coins className="w-8 h-8 text-yellow-400" />
-            <span className="text-4xl font-bold text-white">
+            <span className="text-4xl font-bold text-[#eaecef]">
               {(wallet?.balance || profile?.balance_credits || 0).toLocaleString()}
             </span>
-            <span className="text-gray-400 text-lg">créditos</span>
+            <span className="text-[#848e9c] text-lg">créditos</span>
           </div>
         </div>
 
         {/* Daily claim card */}
         <div className="glass-card p-8 flex flex-col justify-between">
           <div>
-            <p className="text-sm text-gray-400 mb-1 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-purple-400" />
+            <p className="text-sm text-[#848e9c] mb-1 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#00b8d4]" />
               Créditos diarios
             </p>
-            <p className="text-2xl font-bold text-purple-400 mb-3">500 créditos/día</p>
+            <p className="text-2xl font-bold text-[#00b8d4] mb-3">500 créditos/día</p>
           </div>
 
           {canClaim ? (
@@ -115,7 +115,7 @@ export default function Wallet() {
               Reclamar créditos
             </button>
           ) : (
-            <div className="flex items-center gap-2 text-sm text-gray-400 bg-white/5 rounded-xl px-4 py-3 justify-center">
+            <div className="flex items-center gap-2 text-sm text-[#848e9c] bg-[#1e2329] rounded-lg px-4 py-3 justify-center">
               <Clock className="w-4 h-4" />
               Próximo reclamo en {cooldownText}
             </div>
@@ -127,16 +127,16 @@ export default function Wallet() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <WalletIcon className="w-5 h-5 text-purple-400" />
+            <h3 className="text-lg font-semibold text-[#eaecef] flex items-center gap-2">
+              <WalletIcon className="w-5 h-5 text-[#00b8d4]" />
               BETALL Token
             </h3>
           </div>
           <WalletConnect />
           {walletCtx?.isConnected && (
-            <div className="mt-4 bg-white/5 rounded-xl p-4">
-              <p className="text-xs text-gray-400 mb-1">On-chain balance</p>
-              <p className="text-2xl font-bold text-purple-400">
+            <div className="mt-4 bg-[#1e2329] rounded-lg p-4">
+              <p className="text-xs text-[#848e9c] mb-1">On-chain balance</p>
+              <p className="text-2xl font-bold text-[#00b8d4]">
                 {parseFloat(walletCtx.tokenBalance).toLocaleString(undefined, { maximumFractionDigits: 2 })} BETALL
               </p>
             </div>
@@ -147,10 +147,10 @@ export default function Wallet() {
 
       {/* Transaction history */}
       <div className="glass-card p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Historial de transacciones</h3>
+        <h3 className="text-lg font-semibold text-[#eaecef] mb-4">Historial de transacciones</h3>
 
         {!wallet?.transactions || wallet.transactions.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-[#5e6673]">
             <p>No hay transacciones aún</p>
           </div>
         ) : (
@@ -159,27 +159,27 @@ export default function Wallet() {
               const config = typeConfig[tx.type] || typeConfig.bet;
               const Icon = config.icon;
               return (
-                <div key={tx.id} className="flex items-center gap-4 bg-white/5 rounded-xl px-4 py-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${config.color} bg-white/5`}>
+                <div key={tx.id} className="flex items-center gap-4 bg-[#1e2329] rounded-lg px-4 py-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${config.color} bg-[#1e2329] border border-[#2b3139]`}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-white font-medium truncate">{tx.description || config.label}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-[#eaecef] font-medium truncate">{tx.description || config.label}</p>
+                    <p className="text-xs text-[#5e6673]">
                       {new Date(tx.created_at).toLocaleDateString('es-AR', {
                         day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
                       })}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-sm font-bold ${tx.amount > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <p className={`text-sm font-bold ${tx.amount > 0 ? 'text-[#2ebd85]' : 'text-[#f6465d]'}`}>
                       {tx.amount > 0 ? '+' : ''}{tx.amount.toLocaleString()}
                     </p>
                   </div>
                   {tx.market_id && (
                     <Link
                       to={`/market/${tx.market_id}`}
-                      className="text-xs text-purple-400 hover:text-purple-300"
+                      className="text-xs text-[#00b8d4] hover:text-[#00e5ff]"
                     >
                       Ver
                     </Link>

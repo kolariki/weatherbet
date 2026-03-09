@@ -50,8 +50,8 @@ export default function Home() {
         <h1 className="text-3xl lg:text-4xl font-bold mb-2">
           <span className="gradient-text">Mercados de Predicción</span> ⛈️
         </h1>
-        <p className="text-gray-400 text-sm lg:text-base">
-          Apuesta sobre el clima de ciudades mexicanas con créditos virtuales
+        <p className="text-[#848e9c] text-sm lg:text-base">
+          Apuesta sobre el clima de ciudades argentinas con créditos virtuales
         </p>
       </div>
 
@@ -63,10 +63,10 @@ export default function Home() {
             <button
               key={cat.key}
               onClick={() => setCategory(cat.key)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                 category === cat.key
-                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-transparent'
+                  ? 'bg-[#00b8d4]/10 text-[#00b8d4] border border-[#00b8d4]/30'
+                  : 'bg-[#1e2329] text-[#848e9c] hover:bg-[#2b3139] border border-transparent'
               }`}
             >
               <span>{cat.emoji}</span>
@@ -83,10 +83,10 @@ export default function Home() {
               <button
                 key={opt.key}
                 onClick={() => setSort(opt.key)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                   sort === opt.key
-                    ? 'bg-white/10 text-white border border-white/10'
-                    : 'text-gray-500 hover:text-gray-300'
+                    ? 'bg-[#1e2329] text-[#eaecef] border border-[#2b3139]'
+                    : 'text-[#5e6673] hover:text-[#848e9c]'
                 }`}
               >
                 <Icon className="w-3 h-3" />
@@ -100,13 +100,13 @@ export default function Home() {
       {/* Grid */}
       {loading ? (
         <div className="flex items-center justify-center min-h-[40vh]">
-          <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#00b8d4]" />
         </div>
       ) : markets.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[40vh] text-center">
-          <CloudOff className="w-16 h-16 text-gray-600 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-400 mb-2">No hay mercados disponibles</h3>
-          <p className="text-sm text-gray-500">Vuelve pronto — se crean nuevos mercados todos los días</p>
+          <CloudOff className="w-16 h-16 text-[#5e6673] mb-4" />
+          <h3 className="text-lg font-semibold text-[#848e9c] mb-2">No hay mercados disponibles</h3>
+          <p className="text-sm text-[#5e6673]">Vuelve pronto — se crean nuevos mercados todos los días</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

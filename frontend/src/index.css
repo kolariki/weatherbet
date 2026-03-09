@@ -5,7 +5,7 @@
 @layer base {
   * {
     scrollbar-width: thin;
-    scrollbar-color: #374151 transparent;
+    scrollbar-color: #2b3139 transparent;
   }
   *::-webkit-scrollbar {
     width: 6px;
@@ -14,25 +14,25 @@
     background: transparent;
   }
   *::-webkit-scrollbar-thumb {
-    background-color: #374151;
+    background-color: #2b3139;
     border-radius: 3px;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-[#111827]/80 backdrop-blur-xl border border-white/5 rounded-2xl;
+    @apply bg-[#161a1e] border border-[#2b3139] rounded-lg;
   }
   .gradient-text {
-    @apply bg-gradient-to-r from-purple-500 to-indigo-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-[#00b8d4] to-[#00e5ff] bg-clip-text text-transparent;
   }
   .btn-primary {
-    @apply bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-purple-500/25;
+    @apply bg-[#00b8d4] hover:bg-[#00e5ff] text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200;
   }
   .btn-yes {
-    @apply bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 font-semibold py-2.5 px-6 rounded-xl transition-all duration-200;
+    @apply bg-[#2ebd85]/20 hover:bg-[#2ebd85]/30 text-[#2ebd85] border border-[#2ebd85]/30 font-semibold py-2.5 px-6 rounded-lg transition-all duration-200;
   }
   .btn-no {
-    @apply bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 font-semibold py-2.5 px-6 rounded-xl transition-all duration-200;
+    @apply bg-[#f6465d]/20 hover:bg-[#f6465d]/30 text-[#f6465d] border border-[#f6465d]/30 font-semibold py-2.5 px-6 rounded-lg transition-all duration-200;
   }
 }

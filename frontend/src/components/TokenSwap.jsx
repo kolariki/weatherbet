@@ -7,25 +7,21 @@ import { BETALL_ABI } from '../lib/web3Config';
 import toast from 'react-hot-toast';
 import { ArrowDownUp, Loader2, Wallet, ExternalLink } from 'lucide-react';
 
-/**
- * Deposit (BETALL → Credits) and Withdraw (Credits → BETALL) UI.
- */
 export default function TokenSwap() {
   const { isConnected, isCorrectChain, tokenBalance, contractAddress, minterAddress, deposit, withdraw, refetchBalance } = useWallet();
   const { profile, refreshProfile } = useAuth();
-  const [mode, setMode] = useState('deposit'); // 'deposit' | 'withdraw'
+  const [mode, setMode] = useState('deposit');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Approval transaction
   const { writeContract: approve, data: approveTxHash } = useWriteContract();
   const { isLoading: approving } = useWaitForTransactionReceipt({ hash: approveTxHash });
 
   if (!isConnected) {
     return (
       <div className="glass-card p-6 text-center">
-        <Wallet className="w-8 h-8 text-gray-500 mx-auto mb-3" />
-        <p className="text-gray-400 text-sm">Connect your wallet to deposit/withdraw BETALL tokens</p>
+        <Wallet className="w-8 h-8 text-[#5e6673] mx-auto mb-3" />
+        <p className="text-[#848e9c] text-sm">Connect your wallet to deposit/withdraw BETALL tokens</p>
       </div>
     );
   }
@@ -83,8 +79,8 @@ export default function TokenSwap() {
 
   return (
     <div className="glass-card p-6">
-      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-        <ArrowDownUp className="w-5 h-5 text-purple-400" />
+      <h3 className="text-lg font-bold text-[#eaecef] mb-4 flex items-center gap-2">
+        <ArrowDownUp className="w-5 h-5 text-[#00b8d4]" />
         BETALL ↔ Credits
       </h3>
 
@@ -92,20 +88,20 @@ export default function TokenSwap() {
       <div className="grid grid-cols-2 gap-2 mb-5">
         <button
           onClick={() => setMode('deposit')}
-          className={`py-2.5 rounded-xl font-bold text-sm transition-all ${
+          className={`py-2.5 rounded-lg font-bold text-sm transition-all ${
             mode === 'deposit'
-              ? 'bg-emerald-500 text-white'
-              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+              ? 'bg-[#2ebd85] text-white'
+              : 'bg-[#2ebd85]/10 text-[#2ebd85] border border-[#2ebd85]/20'
           }`}
         >
           Deposit BETALL
         </button>
         <button
           onClick={() => setMode('withdraw')}
-          className={`py-2.5 rounded-xl font-bold text-sm transition-all ${
+          className={`py-2.5 rounded-lg font-bold text-sm transition-all ${
             mode === 'withdraw'
-              ? 'bg-purple-500 text-white'
-              : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+              ? 'bg-[#00b8d4] text-white'
+              : 'bg-[#00b8d4]/10 text-[#00b8d4] border border-[#00b8d4]/20'
           }`}
         >
           Withdraw BETALL
@@ -114,19 +110,19 @@ export default function TokenSwap() {
 
       {/* Balances */}
       <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-        <div className="bg-white/5 rounded-xl p-3 text-center">
-          <p className="text-xs text-gray-500 mb-1">BETALL Balance</p>
-          <p className="text-white font-bold">{parseFloat(tokenBalance).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+        <div className="bg-[#1e2329] rounded-lg p-3 text-center">
+          <p className="text-xs text-[#5e6673] mb-1">BETALL Balance</p>
+          <p className="text-[#eaecef] font-bold">{parseFloat(tokenBalance).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
         </div>
-        <div className="bg-white/5 rounded-xl p-3 text-center">
-          <p className="text-xs text-gray-500 mb-1">Credits</p>
-          <p className="text-white font-bold">{(profile?.balance_credits || 0).toLocaleString()}</p>
+        <div className="bg-[#1e2329] rounded-lg p-3 text-center">
+          <p className="text-xs text-[#5e6673] mb-1">Credits</p>
+          <p className="text-[#eaecef] font-bold">{(profile?.balance_credits || 0).toLocaleString()}</p>
         </div>
       </div>
 
       {/* Amount input */}
       <div className="mb-4">
-        <label className="block text-xs text-gray-400 mb-2">
+        <label className="block text-xs text-[#848e9c] mb-2">
           {mode === 'deposit' ? 'BETALL to deposit' : 'Credits to withdraw'}
         </label>
         <div className="flex gap-2">
@@ -135,12 +131,12 @@ export default function TokenSwap() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0"
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-lg font-bold focus:outline-none focus:border-purple-500/50"
+            className="flex-1 bg-[#1e2329] border border-[#2b3139] rounded-lg px-4 py-3 text-[#eaecef] text-lg font-bold focus:outline-none focus:border-[#00b8d4]/50"
             min="1"
           />
           <button
             onClick={() => setAmount(String(Math.floor(maxAmount)))}
-            className="px-4 py-3 rounded-xl bg-white/5 text-gray-300 hover:bg-white/10 text-sm font-medium"
+            className="px-4 py-3 rounded-lg bg-[#1e2329] text-[#848e9c] hover:bg-[#2b3139] text-sm font-medium"
           >
             Max
           </button>
@@ -149,20 +145,20 @@ export default function TokenSwap() {
 
       {/* Conversion info */}
       {amount && parseFloat(amount) > 0 && (
-        <div className="bg-white/5 rounded-xl p-3 mb-4 text-sm">
+        <div className="bg-[#1e2329] rounded-lg p-3 mb-4 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-400">You {mode === 'deposit' ? 'spend' : 'spend'}</span>
-            <span className="text-white font-medium">
+            <span className="text-[#848e9c]">You spend</span>
+            <span className="text-[#eaecef] font-medium">
               {parseFloat(amount).toLocaleString()} {mode === 'deposit' ? 'BETALL' : 'credits'}
             </span>
           </div>
           <div className="flex justify-between mt-1">
-            <span className="text-gray-400">You receive</span>
-            <span className="text-emerald-400 font-bold">
+            <span className="text-[#848e9c]">You receive</span>
+            <span className="text-[#2ebd85] font-bold">
               {Math.floor(parseFloat(amount)).toLocaleString()} {mode === 'deposit' ? 'credits' : 'BETALL'}
             </span>
           </div>
-          <p className="text-xs text-gray-500 mt-2">Rate: 1 BETALL = 1 credit</p>
+          <p className="text-xs text-[#5e6673] mt-2">Rate: 1 BETALL = 1 credit</p>
         </div>
       )}
 
@@ -171,7 +167,7 @@ export default function TokenSwap() {
         <button
           onClick={handleApprove}
           disabled={approving}
-          className="w-full py-2.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all mb-3 disabled:opacity-50"
+          className="w-full py-2.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all mb-3 disabled:opacity-50"
         >
           {approving ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : '1. Approve BETALL spending'}
         </button>
@@ -181,10 +177,10 @@ export default function TokenSwap() {
       <button
         onClick={handleAction}
         disabled={loading || !amount || parseFloat(amount) <= 0}
-        className={`w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-50 ${
+        className={`w-full py-3.5 rounded-lg font-bold text-sm text-white transition-all disabled:opacity-50 ${
           mode === 'deposit'
-            ? 'bg-gradient-to-r from-emerald-500 to-emerald-600'
-            : 'bg-gradient-to-r from-purple-500 to-purple-600'
+            ? 'bg-[#2ebd85]'
+            : 'bg-[#00b8d4]'
         }`}
       >
         {loading ? (

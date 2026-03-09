@@ -27,7 +27,7 @@ export default function Layout({ children }) {
   const filteredNav = navItems.filter((item) => !item.auth || user);
 
   return (
-    <div className="min-h-screen bg-[#0a0e1a] flex">
+    <div className="min-h-screen bg-[#0b0e11] flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -38,19 +38,19 @@ export default function Layout({ children }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-[#0d1117] border-r border-white/5 flex flex-col transition-transform duration-300 ${
+        className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-[#161a1e] border-r border-[#2b3139] flex flex-col transition-transform duration-300 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Logo */}
-        <div className="p-6 border-b border-white/5">
+        <div className="p-6 border-b border-[#2b3139]">
           <Link to="/" className="flex items-center gap-3" onClick={() => setSidebarOpen(false)}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center">
               <CloudLightning className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold gradient-text">WeatherBet</h1>
-              <p className="text-[10px] text-gray-500 -mt-0.5">Predicción Climática</p>
+              <h1 className="text-lg font-bold gradient-text">BetAll</h1>
+              <p className="text-[10px] text-[#5e6673] -mt-0.5">Mercado de Predicción Climática</p>
             </div>
           </Link>
         </div>
@@ -65,10 +65,10 @@ export default function Layout({ children }) {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                   active
-                    ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-[#00b8d4]/10 text-[#00b8d4] border border-[#00b8d4]/20'
+                    : 'text-[#848e9c] hover:text-[#eaecef] hover:bg-[#1e2329]'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -80,15 +80,15 @@ export default function Layout({ children }) {
 
         {/* User info */}
         {user && (
-          <div className="p-4 border-t border-white/5">
+          <div className="p-4 border-t border-[#2b3139]">
             <div className="glass-card p-3">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center text-xs font-bold text-white">
                   {profile?.username?.[0]?.toUpperCase() || '?'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{profile?.username || 'Usuario'}</p>
-                  <p className="text-xs text-gray-400 flex items-center gap-1">
+                  <p className="text-sm font-medium text-[#eaecef] truncate">{profile?.username || 'Usuario'}</p>
+                  <p className="text-xs text-[#848e9c] flex items-center gap-1">
                     <Coins className="w-3 h-3 text-yellow-400" />
                     {(profile?.balance_credits || 0).toLocaleString()}
                   </p>
@@ -96,7 +96,7 @@ export default function Layout({ children }) {
               </div>
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-2 text-xs text-gray-400 hover:text-red-400 transition-colors w-full px-1"
+                className="flex items-center gap-2 text-xs text-[#848e9c] hover:text-[#f6465d] transition-colors w-full px-1"
               >
                 <LogOut className="w-3 h-3" />
                 Cerrar sesión
@@ -106,7 +106,7 @@ export default function Layout({ children }) {
         )}
 
         {!user && (
-          <div className="p-4 border-t border-white/5">
+          <div className="p-4 border-t border-[#2b3139]">
             <Link
               to="/login"
               onClick={() => setSidebarOpen(false)}
@@ -121,11 +121,11 @@ export default function Layout({ children }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-[#0a0e1a]/80 backdrop-blur-xl border-b border-white/5">
+        <header className="sticky top-0 z-30 bg-[#0b0e11] border-b border-[#2b3139]">
           <div className="flex items-center justify-between px-4 lg:px-8 h-16">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-gray-400 hover:text-white"
+              className="lg:hidden p-2 text-[#848e9c] hover:text-[#eaecef]"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -136,10 +136,10 @@ export default function Layout({ children }) {
               {user && profile && (
                 <div className="flex items-center gap-2 glass-card px-4 py-2">
                   <Coins className="w-4 h-4 text-yellow-400" />
-                  <span className="text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-[#eaecef]">
                     {profile.balance_credits.toLocaleString()}
                   </span>
-                  <span className="text-xs text-gray-400">créditos</span>
+                  <span className="text-xs text-[#848e9c]">créditos</span>
                 </div>
               )}
               <WalletConnect compact />

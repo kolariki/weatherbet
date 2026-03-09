@@ -42,16 +42,16 @@ export default function Register() {
     <div className="min-h-[80vh] flex items-center justify-center">
       <div className="glass-card p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/25">
+          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center mx-auto mb-4">
             <CloudLightning className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold gradient-text">Crear Cuenta</h1>
-          <p className="text-sm text-gray-400 mt-1">Únete a WeatherBet — recibes 1,000 créditos gratis</p>
+          <p className="text-sm text-[#848e9c] mt-1">Únete a BetAll — recibes 1,000 créditos gratis</p>
         </div>
 
         <button
           onClick={handleGoogle}
-          className="w-full flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-3 text-sm font-medium text-white transition-all mb-6"
+          className="w-full flex items-center justify-center gap-3 bg-[#1e2329] hover:bg-[#2b3139] border border-[#2b3139] rounded-lg py-3 text-sm font-medium text-[#eaecef] transition-all mb-6"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -63,21 +63,21 @@ export default function Register() {
         </button>
 
         <div className="flex items-center gap-4 mb-6">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs text-gray-500">o con email</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-[#2b3139]" />
+          <span className="text-xs text-[#5e6673]">o con email</span>
+          <div className="flex-1 h-px bg-[#2b3139]" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs text-gray-400 mb-1.5">Nombre de usuario</label>
+            <label className="block text-xs text-[#848e9c] mb-1.5">Nombre de usuario</label>
             <div className="relative">
-              <User className="absolute left-3 top-3 w-4 h-4 text-gray-500" />
+              <User className="absolute left-3 top-3 w-4 h-4 text-[#5e6673]" />
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-purple-500/50"
+                className="w-full bg-[#1e2329] border border-[#2b3139] rounded-lg pl-10 pr-4 py-2.5 text-[#eaecef] text-sm focus:outline-none focus:border-[#00b8d4]/50"
                 placeholder="tu_username"
                 required
               />
@@ -85,14 +85,14 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-xs text-gray-400 mb-1.5">Email</label>
+            <label className="block text-xs text-[#848e9c] mb-1.5">Email</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-500" />
+              <Mail className="absolute left-3 top-3 w-4 h-4 text-[#5e6673]" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-purple-500/50"
+                className="w-full bg-[#1e2329] border border-[#2b3139] rounded-lg pl-10 pr-4 py-2.5 text-[#eaecef] text-sm focus:outline-none focus:border-[#00b8d4]/50"
                 placeholder="tu@email.com"
                 required
               />
@@ -100,14 +100,14 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-xs text-gray-400 mb-1.5">Contraseña</label>
+            <label className="block text-xs text-[#848e9c] mb-1.5">Contraseña</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-500" />
+              <Lock className="absolute left-3 top-3 w-4 h-4 text-[#5e6673]" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-purple-500/50"
+                className="w-full bg-[#1e2329] border border-[#2b3139] rounded-lg pl-10 pr-4 py-2.5 text-[#eaecef] text-sm focus:outline-none focus:border-[#00b8d4]/50"
                 placeholder="Mínimo 6 caracteres"
                 required
                 minLength={6}
@@ -124,9 +124,9 @@ export default function Register() {
           </button>
         </form>
 
-        <p className="text-sm text-gray-400 text-center mt-6">
+        <p className="text-sm text-[#848e9c] text-center mt-6">
           ¿Ya tienes cuenta?{' '}
-          <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium">
+          <Link to="/login" className="text-[#00b8d4] hover:text-[#00e5ff] font-medium">
             Inicia sesión
           </Link>
         </p>

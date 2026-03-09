@@ -17,8 +17,8 @@ const categoryColors = {
   rain: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
   wind: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
   humidity: 'text-teal-400 bg-teal-400/10 border-teal-400/20',
-  visibility: 'text-purple-400 bg-purple-400/10 border-purple-400/20',
-  other: 'text-gray-400 bg-gray-400/10 border-gray-400/20',
+  visibility: 'text-[#00b8d4] bg-[#00b8d4]/10 border-[#00b8d4]/20',
+  other: 'text-[#848e9c] bg-[#848e9c]/10 border-[#848e9c]/20',
 };
 
 const categoryLabels = {
@@ -78,7 +78,7 @@ export default function MarketCard({ market }) {
   return (
     <div
       onClick={() => navigate(`/market/${market.id}`)}
-      className="glass-card p-5 cursor-pointer hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-300 group"
+      className="glass-card p-5 cursor-pointer hover:border-[#00b8d4]/40 transition-all duration-300 group"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
@@ -87,7 +87,7 @@ export default function MarketCard({ market }) {
           {categoryLabels[market.category] || 'Otro'}
         </span>
         {isResolved ? (
-          <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${market.result ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${market.result ? 'bg-[#2ebd85]/20 text-[#2ebd85]' : 'bg-[#f6465d]/20 text-[#f6465d]'}`}>
             {market.result ? '✅ SÍ' : '❌ NO'}
           </span>
         ) : isClosed ? (
@@ -98,12 +98,12 @@ export default function MarketCard({ market }) {
       </div>
 
       {/* Question */}
-      <h3 className="text-sm font-semibold text-white mb-3 leading-snug group-hover:text-purple-300 transition-colors line-clamp-2">
+      <h3 className="text-sm font-semibold text-[#eaecef] mb-3 leading-snug group-hover:text-[#00b8d4] transition-colors line-clamp-2">
         {market.question}
       </h3>
 
       {/* City + Countdown */}
-      <div className="flex items-center justify-between text-xs text-gray-400 mb-4">
+      <div className="flex items-center justify-between text-xs text-[#848e9c] mb-4">
         <span className="flex items-center gap-1">
           <MapPin className="w-3 h-3" />
           {market.city} {market.country_code === 'AR' ? '🇦🇷' : market.country_code === 'MX' ? '🇲🇽' : '🌍'}
@@ -124,12 +124,12 @@ export default function MarketCard({ market }) {
       />
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
-        <span className="flex items-center gap-1 text-xs text-gray-400">
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#2b3139]">
+        <span className="flex items-center gap-1 text-xs text-[#848e9c]">
           <Coins className="w-3 h-3" />
           {(market.total_pool || 0).toLocaleString()} créditos
         </span>
-        <span className="flex items-center gap-1 text-xs text-gray-400">
+        <span className="flex items-center gap-1 text-xs text-[#848e9c]">
           <Users className="w-3 h-3" />
           {market.total_positions || 0} apuestas
         </span>
