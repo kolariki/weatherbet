@@ -297,18 +297,22 @@ export default function MarketDetail() {
           </div>
 
           {/* Recent positions */}
-          {market.recent_positions?.length > 0 && (
+          {(() => {
+            const myTrades = (market.recent_positions || []).filter(p => p.is_mine);
+            const allTrades = market.recent_positions || [];
+            return (<>
+          {myTrades.length > 0 && (
             <div className="glass-card p-6">
-              <h3 className="text-sm font-semibold text-gray-300 mb-4">Trades recientes</h3>
+              <h3 className="text-sm font-semibold text-gray-300 mb-4">Mis Trades</h3>
               <div className="space-y-2">
-                {market.recent_positions.map((pos, i) => {
-                  const isExpanded = expandedTrade === i;
+                {myTrades.map((pos, i) => {
+                  const isExpanded = expandedTrade === `my-${i}`;
                   const fee = pos.amount * 0.02;
                   const isSell = pos.type === 'sell';
                   return (
                     <div key={i}>
                       <div
-                        onClick={() => setExpandedTrade(isExpanded ? null : i)}
+                        onClick={() => setExpandedTrade(isExpanded ? null : `my-${i}`)}
                         className="flex items-center justify-between bg-white/5 hover:bg-white/10 rounded-xl px-4 py-2.5 text-sm cursor-pointer transition-colors"
                       >
                         <div className="flex items-center gap-3">
@@ -316,7 +320,6 @@ export default function MarketDetail() {
                             {pos.side}
                           </span>
                           {isSell && <span className="text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">VENTA</span>}
-                          {pos.is_mine && <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full">Tú</span>}
                         </div>
                         <span className={`font-medium ${isSell ? 'text-yellow-300' : 'text-gray-300'}`}>
                           {isSell ? '+' : '-'}{pos.amount.toLocaleString()} créditos
@@ -363,6 +366,30 @@ export default function MarketDetail() {
               </div>
             </div>
           )}
+
+          {/* Order Book — all trades */}
+          {allTrades.length > 0 && (
+            <div className="glass-card p-4 mt-4">
+              <h3 className="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Libro de operaciones</h3>
+              <div className="space-y-1 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-white/5">
+                {allTrades.map((t, i) => {
+                  const isSell = t.type === 'sell';
+                  return (
+                    <div key={i} className="flex items-center justify-between px-2 py-1.5 text-[11px] rounded-lg hover:bg-white/5">
+                      <div className="flex items-center gap-2">
+                        <span className={`font-bold ${t.side === 'YES' ? 'text-emerald-400/70' : 'text-red-400/70'}`}>{t.side}</span>
+                        {isSell && <span className="text-yellow-500/60 text-[9px]">SELL</span>}
+                      </div>
+                      <span className="text-gray-500">{t.amount.toLocaleString()}</span>
+                      <span className="text-gray-600">{new Date(t.created_at).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          </>);
+          })()}
         </div>
 
         {/* Sidebar: Trade + Position */}
