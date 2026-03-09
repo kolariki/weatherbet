@@ -17,8 +17,8 @@ router.get('/:id/price', async (req, res) => {
     if (!market) return res.status(404).json({ error: 'Mercado no encontrado' });
 
     const prices = getPrices(
-      market.yes_liquidity || INITIAL_LIQUIDITY,
-      market.no_liquidity || INITIAL_LIQUIDITY
+      parseFloat(market.yes_liquidity) || 0,
+      parseFloat(market.no_liquidity) || 0
     );
     res.json(prices);
   } catch (error) {
@@ -40,8 +40,8 @@ router.get('/:id/quote', async (req, res) => {
 
     if (!market) return res.status(404).json({ error: 'Mercado no encontrado' });
 
-    const yesLiq = market.yes_liquidity || INITIAL_LIQUIDITY;
-    const noLiq = market.no_liquidity || INITIAL_LIQUIDITY;
+    const yesLiq = parseFloat(market.yes_liquidity) || 0;
+    const noLiq = parseFloat(market.no_liquidity) || 0;
 
     const quote = calculateBuy(yesLiq, noLiq, side.toUpperCase(), parseFloat(amount));
     res.json(quote);
@@ -65,8 +65,8 @@ router.get('/:id/sell-quote', requireAuth, async (req, res) => {
     if (!market) return res.status(404).json({ error: 'Mercado no encontrado' });
 
     const quote = calculateSell(
-      market.yes_liquidity || INITIAL_LIQUIDITY,
-      market.no_liquidity || INITIAL_LIQUIDITY,
+      parseFloat(market.yes_liquidity) || 0,
+      parseFloat(market.no_liquidity) || 0,
       side.toUpperCase(),
       parseFloat(shares)
     );
@@ -108,8 +108,8 @@ router.post('/:id/bet', requireAuth, async (req, res) => {
     }
 
     // Calculate AMM trade
-    const yesLiq = market.yes_liquidity || INITIAL_LIQUIDITY;
-    const noLiq = market.no_liquidity || INITIAL_LIQUIDITY;
+    const yesLiq = parseFloat(market.yes_liquidity) || 0;
+    const noLiq = parseFloat(market.no_liquidity) || 0;
     const trade = calculateBuy(yesLiq, noLiq, side, amount);
 
     // Deduct balance
@@ -212,8 +212,8 @@ router.post('/:id/sell', requireAuth, async (req, res) => {
     if (new Date(market.closes_at) <= new Date()) return res.status(400).json({ error: 'Mercado cerrado' });
 
     // Calculate sell
-    const yesLiq = market.yes_liquidity || INITIAL_LIQUIDITY;
-    const noLiq = market.no_liquidity || INITIAL_LIQUIDITY;
+    const yesLiq = parseFloat(market.yes_liquidity) || 0;
+    const noLiq = parseFloat(market.no_liquidity) || 0;
     const sale = calculateSell(yesLiq, noLiq, position.side, position.shares);
 
     // Mark position as sold

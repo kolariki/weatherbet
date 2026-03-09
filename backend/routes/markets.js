@@ -37,8 +37,8 @@ router.get('/', optionalAuth, async (req, res) => {
 
     // Calculate AMM prices for each market
     const marketsWithPools = (markets || []).map((market) => {
-      const yesLiq = market.yes_liquidity || INITIAL_LIQUIDITY;
-      const noLiq = market.no_liquidity || INITIAL_LIQUIDITY;
+      const yesLiq = parseFloat(market.yes_liquidity) || 0;
+      const noLiq = parseFloat(market.no_liquidity) || 0;
       const prices = getPrices(yesLiq, noLiq);
       const totalPool = (market.yes_pool || 0) + (market.no_pool || 0);
 
@@ -78,8 +78,8 @@ router.get('/:id', optionalAuth, async (req, res) => {
       .eq('market_id', id)
       .order('created_at', { ascending: false });
 
-    const yesLiq = market.yes_liquidity || INITIAL_LIQUIDITY;
-    const noLiq = market.no_liquidity || INITIAL_LIQUIDITY;
+    const yesLiq = parseFloat(market.yes_liquidity) || 0;
+    const noLiq = parseFloat(market.no_liquidity) || 0;
     const prices = getPrices(yesLiq, noLiq);
     const totalPool = (market.yes_pool || 0) + (market.no_pool || 0);
 
