@@ -8,6 +8,7 @@ import {
   ArrowLeft, Clock, MapPin, Coins, Loader2, CheckCircle, XCircle,
   TrendingUp, TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight, Wallet,
 } from 'lucide-react';
+import PriceChart from '../components/PriceChart';
 import { useWallet } from '../contexts/WalletContext';
 
 const metricLabels = {
@@ -36,82 +37,6 @@ function useCountdown(targetDate) {
     return () => clearInterval(i);
   }, [targetDate]);
   return timeLeft;
-}
-
-// Simple price chart using SVG
-function PriceChart({ data }) {
-  if (!data || data.length < 2) return null;
-
-  const width = 600;
-  const height = 200;
-  const padding = { top: 20, right: 20, bottom: 30, left: 50 };
-  const chartW = width - padding.left - padding.right;
-  const chartH = height - padding.top - padding.bottom;
-
-  const prices = data.map(d => d.yes_price * 100);
-  const minP = Math.max(0, Math.min(...prices) - 5);
-  const maxP = Math.min(100, Math.max(...prices) + 5);
-  const range = maxP - minP || 1;
-
-  const points = prices.map((p, i) => {
-    const x = padding.left + (i / (prices.length - 1)) * chartW;
-    const y = padding.top + chartH - ((p - minP) / range) * chartH;
-    return `${x},${y}`;
-  }).join(' ');
-
-  // Area fill
-  const areaPoints = `${padding.left},${padding.top + chartH} ${points} ${padding.left + chartW},${padding.top + chartH}`;
-
-  // Grid lines
-  const gridLines = [25, 50, 75].filter(v => v >= minP && v <= maxP);
-
-  return (
-    <div className="w-full overflow-hidden">
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto">
-        {/* Grid */}
-        {gridLines.map(v => {
-          const y = padding.top + chartH - ((v - minP) / range) * chartH;
-          return (
-            <g key={v}>
-              <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="rgba(43,49,57,0.8)" strokeDasharray="4,4" />
-              <text x={padding.left - 8} y={y + 4} textAnchor="end" fill="#5e6673" fontSize="11">{v}%</text>
-            </g>
-          );
-        })}
-
-        {/* Area gradient */}
-        <defs>
-          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#00b8d4" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#00b8d4" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <polygon points={areaPoints} fill="url(#areaGrad)" />
-
-        {/* Line */}
-        <polyline points={points} fill="none" stroke="#00b8d4" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-
-        {/* Current price dot */}
-        {(() => {
-          const lastX = padding.left + chartW;
-          const lastY = padding.top + chartH - ((prices[prices.length - 1] - minP) / range) * chartH;
-          return (
-            <>
-              <circle cx={lastX} cy={lastY} r="4" fill="#00b8d4" />
-              <circle cx={lastX} cy={lastY} r="8" fill="#00b8d4" opacity="0.3">
-                <animate attributeName="r" from="4" to="12" dur="1.5s" repeatCount="indefinite" />
-                <animate attributeName="opacity" from="0.4" to="0" dur="1.5s" repeatCount="indefinite" />
-              </circle>
-            </>
-          );
-        })()}
-
-        {/* Axes */}
-        <text x={padding.left - 8} y={padding.top + 4} textAnchor="end" fill="#5e6673" fontSize="11">{maxP.toFixed(0)}%</text>
-        <text x={padding.left - 8} y={padding.top + chartH + 4} textAnchor="end" fill="#5e6673" fontSize="11">{minP.toFixed(0)}%</text>
-      </svg>
-    </div>
-  );
 }
 
 export default function MarketDetail() {
@@ -257,14 +182,9 @@ export default function MarketDetail() {
             <div className="glass-card p-6">
               <h3 className="text-sm font-semibold text-[#848e9c] mb-4 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[#00b8d4]" />
-                Historial de Precios (SÍ)
+                Historial de Precios
               </h3>
-              <PriceChart data={priceHistory} />
-              <div className="flex justify-between text-xs text-[#5e6673] mt-2">
-                <span>{new Date(priceHistory[0].created_at).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}</span>
-                <span>{priceHistory.length} trades</span>
-                <span>{new Date(priceHistory[priceHistory.length - 1].created_at).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}</span>
-              </div>
+              <PriceChart data={priceHistory} height={350} />
             </div>
           )}
 
