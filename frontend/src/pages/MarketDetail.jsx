@@ -123,6 +123,7 @@ export default function MarketDetail() {
   const [amount, setAmount] = useState(100);
   const [betting, setBetting] = useState(false);
   const [selling, setSelling] = useState(null);
+  const [expandedTrade, setExpandedTrade] = useState(null);
   const [quote, setQuote] = useState(null);
   const [priceHistory, setPriceHistory] = useState([]);
   const [sellQuotes, setSellQuotes] = useState({});  // { positionId: credits_out }
@@ -300,16 +301,65 @@ export default function MarketDetail() {
             <div className="glass-card p-6">
               <h3 className="text-sm font-semibold text-gray-300 mb-4">Trades recientes</h3>
               <div className="space-y-2">
-                {market.recent_positions.map((pos, i) => (
-                  <div key={i} className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-2.5 text-sm">
-                    <div className="flex items-center gap-3">
-                      <span className={`font-bold ${pos.side === 'YES' ? 'text-emerald-400' : 'text-red-400'}`}>{pos.side}</span>
-                      {pos.is_mine && <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full">Tú</span>}
+                {market.recent_positions.map((pos, i) => {
+                  const isExpanded = expandedTrade === i;
+                  const fee = pos.amount * 0.02;
+                  const isSell = pos.type === 'sell';
+                  return (
+                    <div key={i}>
+                      <div
+                        onClick={() => setExpandedTrade(isExpanded ? null : i)}
+                        className="flex items-center justify-between bg-white/5 hover:bg-white/10 rounded-xl px-4 py-2.5 text-sm cursor-pointer transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className={`font-bold ${pos.side === 'YES' ? 'text-emerald-400' : 'text-red-400'}`}>
+                            {pos.side}
+                          </span>
+                          {isSell && <span className="text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">VENTA</span>}
+                          {pos.is_mine && <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full">Tú</span>}
+                        </div>
+                        <span className={`font-medium ${isSell ? 'text-yellow-300' : 'text-gray-300'}`}>
+                          {isSell ? '+' : '-'}{pos.amount.toLocaleString()} créditos
+                        </span>
+                        <span className="text-gray-500 text-xs">{new Date(pos.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                      {isExpanded && (
+                        <div className="mx-2 mt-1 mb-2 bg-white/5 rounded-lg p-3 text-xs space-y-1.5 border border-white/5">
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Tipo</span>
+                            <span className={`font-bold ${isSell ? 'text-yellow-400' : 'text-emerald-400'}`}>
+                              {isSell ? 'Venta de shares' : 'Compra de shares'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Lado</span>
+                            <span className={`font-bold ${pos.side === 'YES' ? 'text-emerald-400' : 'text-red-400'}`}>{pos.side}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">{isSell ? 'Créditos recibidos' : 'Créditos gastados'}</span>
+                            <span className="text-white font-medium">{pos.amount.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Comisión plataforma (2%)</span>
+                            <span className="text-yellow-400">{fee.toFixed(1)}</span>
+                          </div>
+                          <div className="border-t border-white/5 pt-1.5 flex justify-between">
+                            <span className="text-gray-500">Precio SÍ después</span>
+                            <span className="text-gray-300">{(pos.yes_price_after * 100).toFixed(1)}¢</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Precio NO después</span>
+                            <span className="text-gray-300">{(pos.no_price_after * 100).toFixed(1)}¢</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Fecha</span>
+                            <span className="text-gray-300">{new Date(pos.created_at).toLocaleString('es-AR')}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <span className="text-gray-300 font-medium">{pos.amount.toLocaleString()} créditos</span>
-                    <span className="text-gray-500 text-xs">{new Date(pos.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

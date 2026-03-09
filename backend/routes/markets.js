@@ -127,12 +127,23 @@ router.get('/:id', optionalAuth, async (req, res) => {
       }
     }
 
-    // Anonymize positions for display
-    const recentPositions = (positions || []).slice(0, 20).map((p) => ({
-      side: p.side,
-      amount: p.amount,
-      created_at: p.created_at,
-      is_mine: req.user ? p.user_id === req.user.id : false,
+    // Get recent trades from price_history for richer detail
+    const { data: recentTrades } = await supabase
+      .from('price_history')
+      .select('*')
+      .eq('market_id', id)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    const recentPositions = (recentTrades || []).map((t) => ({
+      id: t.id,
+      side: t.trade_type?.includes('yes') ? 'YES' : 'NO',
+      type: t.trade_type?.startsWith('sell') ? 'sell' : 'buy',
+      amount: parseFloat(t.trade_amount) || 0,
+      yes_price_after: parseFloat(t.yes_price),
+      no_price_after: parseFloat(t.no_price),
+      created_at: t.created_at,
+      is_mine: req.user ? t.trader_id === req.user.id : false,
     }));
 
     res.json({
