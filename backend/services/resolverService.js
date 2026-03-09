@@ -17,7 +17,8 @@ async function resolveMarkets() {
       .from('markets')
       .select('*')
       .eq('status', 'open')
-      .lte('resolves_at', now);
+      .lte('resolves_at', now)
+      .neq('resolution_type', 'manual');
 
     if (error) { console.error('[Resolver] Error:', error.message); return; }
     if (!markets || markets.length === 0) { console.log('[Resolver] No markets to resolve'); return; }
@@ -128,4 +129,82 @@ async function resolveMarket(market) {
   console.log(`[Resolver] #${market.id}: ${winningSide} wins. ${winners.length}/${positions.length} ganadores.`);
 }
 
-module.exports = { startResolver, resolveMarkets };
+/**
+ * Manual resolution — admin decides the outcome.
+ */
+async function resolveMarketManual(market, result) {
+  console.log(`[Resolver] Manual resolution #${market.id}: ${market.question} → ${result ? 'YES' : 'NO'}`);
+
+  await supabase
+    .from('markets')
+    .update({ status: 'resolved', result, resolved_at: new Date().toISOString() })
+    .eq('id', market.id);
+
+  const { data: positions } = await supabase
+    .from('positions')
+    .select('*')
+    .eq('market_id', market.id)
+    .eq('status', 'active');
+
+  if (!positions || positions.length === 0) return;
+
+  const winningSide = result ? 'YES' : 'NO';
+
+  for (const pos of positions) {
+    const isWinner = pos.side === winningSide;
+    const shares = pos.shares || pos.amount;
+    const payout = isWinner ? Math.floor(shares) : 0;
+
+    await supabase
+      .from('positions')
+      .update({ won: isWinner, payout, status: 'resolved' })
+      .eq('id', pos.id);
+
+    if (isWinner) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('balance_credits, total_wins, total_profit')
+        .eq('id', pos.user_id)
+        .single();
+
+      if (profile) {
+        const profit = payout - pos.amount;
+        await supabase
+          .from('profiles')
+          .update({
+            balance_credits: profile.balance_credits + payout,
+            total_wins: profile.total_wins + 1,
+            total_profit: profile.total_profit + profit,
+          })
+          .eq('id', pos.user_id);
+      }
+
+      await supabase.from('transactions').insert({
+        user_id: pos.user_id, type: 'win', amount: payout, market_id: market.id,
+        description: `Ganaste ${payout} créditos (${shares.toFixed(1)} shares ${pos.side}) en: ${market.question}`,
+      });
+    } else {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('total_profit')
+        .eq('id', pos.user_id)
+        .single();
+
+      if (profile) {
+        await supabase
+          .from('profiles')
+          .update({ total_profit: profile.total_profit - pos.amount })
+          .eq('id', pos.user_id);
+      }
+
+      await supabase.from('transactions').insert({
+        user_id: pos.user_id, type: 'loss', amount: 0, market_id: market.id,
+        description: `Perdiste ${pos.amount} créditos (${shares.toFixed(1)} shares ${pos.side}) en: ${market.question}`,
+      });
+    }
+  }
+
+  console.log(`[Resolver] #${market.id} manually resolved: ${winningSide} wins`);
+}
+
+module.exports = { startResolver, resolveMarkets, resolveMarketManual };

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Clock, Users, Coins, MapPin, Thermometer, CloudRain, Wind, Eye, Droplets } from 'lucide-react';
+import { Clock, Users, Coins, MapPin, Thermometer, CloudRain, Wind, Eye, Droplets, Landmark, Trophy, Bitcoin, Tv, TrendingUp, Cpu, FlaskConical, Cloud, Drama } from 'lucide-react';
 import OddsBar from './OddsBar';
 import { useState, useEffect } from 'react';
 
@@ -8,11 +8,29 @@ const categoryIcons = {
   rain: CloudRain,
   wind: Wind,
   humidity: Droplets,
+  weather: Cloud,
+  politics: Landmark,
+  sports: Trophy,
+  crypto: Bitcoin,
+  entertainment: Tv,
+  economy: TrendingUp,
+  technology: Cpu,
+  science: FlaskConical,
+  culture: Drama,
   visibility: Eye,
   other: Eye,
 };
 
 const categoryColors = {
+  politics: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
+  sports: 'text-green-400 bg-green-400/10 border-green-400/20',
+  crypto: 'text-orange-400 bg-orange-400/10 border-orange-400/20',
+  entertainment: 'text-pink-400 bg-pink-400/10 border-pink-400/20',
+  economy: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
+  technology: 'text-[#00b8d4] bg-[#00b8d4]/10 border-[#00b8d4]/20',
+  science: 'text-purple-400 bg-purple-400/10 border-purple-400/20',
+  weather: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
+  culture: 'text-rose-400 bg-rose-400/10 border-rose-400/20',
   temperature: 'text-orange-400 bg-orange-400/10 border-orange-400/20',
   rain: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
   wind: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
@@ -22,6 +40,15 @@ const categoryColors = {
 };
 
 const categoryLabels = {
+  politics: 'Política',
+  sports: 'Deportes',
+  crypto: 'Crypto',
+  entertainment: 'Entretenimiento',
+  economy: 'Economía',
+  technology: 'Tecnología',
+  science: 'Ciencia',
+  weather: 'Clima',
+  culture: 'Cultura',
   temperature: 'Temperatura',
   rain: 'Lluvia',
   wind: 'Viento',

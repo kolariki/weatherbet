@@ -4,12 +4,16 @@ import MarketCard from '../components/MarketCard';
 import { Loader2, CloudOff, TrendingUp, Clock, Flame, Sparkles } from 'lucide-react';
 
 const categories = [
-  { key: 'all', label: 'Todos', emoji: '🌍' },
-  { key: 'temperature', label: 'Temperatura', emoji: '🌡️' },
-  { key: 'rain', label: 'Lluvia', emoji: '🌧️' },
-  { key: 'wind', label: 'Viento', emoji: '💨' },
-  { key: 'humidity', label: 'Humedad', emoji: '💧' },
-  { key: 'other', label: 'Otros', emoji: '🔮' },
+  { key: 'all', label: 'Todos', emoji: '🌐' },
+  { key: 'politics', label: 'Política', emoji: '🏛️' },
+  { key: 'sports', label: 'Deportes', emoji: '⚽' },
+  { key: 'crypto', label: 'Crypto', emoji: '₿' },
+  { key: 'entertainment', label: 'Entretenimiento', emoji: '🎬' },
+  { key: 'economy', label: 'Economía', emoji: '📈' },
+  { key: 'technology', label: 'Tecnología', emoji: '💻' },
+  { key: 'science', label: 'Ciencia', emoji: '🔬' },
+  { key: 'weather', label: 'Clima', emoji: '⛈️' },
+  { key: 'culture', label: 'Cultura', emoji: '🎭' },
 ];
 
 const sortOptions = [
@@ -48,10 +52,10 @@ export default function Home() {
       {/* Hero */}
       <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl font-bold mb-2">
-          <span className="gradient-text">Mercados de Predicción</span> ⛈️
+          <span className="gradient-text">Mercados de Predicción</span>
         </h1>
         <p className="text-[#848e9c] text-sm lg:text-base">
-          Apuesta sobre el clima de ciudades argentinas con créditos virtuales
+          Apostá sobre política, deportes, crypto, clima y más con créditos o tokens BETALL
         </p>
       </div>
 

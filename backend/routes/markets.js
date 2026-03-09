@@ -20,7 +20,12 @@ router.get('/', optionalAuth, async (req, res) => {
     }
 
     if (category && category !== 'all') {
-      query = query.eq('category', category);
+      if (category === 'weather') {
+        // Weather super-category includes all weather subtypes
+        query = query.in('category', ['weather', 'temperature', 'rain', 'wind', 'humidity', 'visibility']);
+      } else {
+        query = query.eq('category', category);
+      }
     }
 
     // Default sort: closing soon first for open markets
@@ -168,25 +173,32 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
       operator, threshold, closes_at, resolves_at, category,
     } = req.body;
 
-    if (!question || !city || !metric || !operator || threshold === undefined || !closes_at || !resolves_at) {
-      return res.status(400).json({ error: 'Faltan campos requeridos' });
+    if (!question || !closes_at || !resolves_at) {
+      return res.status(400).json({ error: 'Faltan campos requeridos: question, closes_at, resolves_at' });
     }
+
+    const insertData = {
+      question,
+      description: description || null,
+      closes_at,
+      resolves_at,
+      category: category || 'other',
+      created_by: req.user.id,
+    };
+
+    // Weather-specific fields (optional for generic markets)
+    if (city) insertData.city = city;
+    if (country_code) insertData.country_code = country_code;
+    if (metric) insertData.metric = metric;
+    if (operator) insertData.operator = operator;
+    if (threshold !== undefined) insertData.threshold = threshold;
+
+    // resolution_type: 'auto' (weather) or 'manual' (admin resolves)
+    insertData.resolution_type = (city && metric && operator && threshold !== undefined) ? 'auto' : 'manual';
 
     const { data: market, error } = await supabase
       .from('markets')
-      .insert({
-        question,
-        description: description || null,
-        city,
-        country_code: country_code || 'MX',
-        metric,
-        operator,
-        threshold,
-        closes_at,
-        resolves_at,
-        category: category || 'temperature',
-        created_by: req.user.id,
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -195,6 +207,36 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Create market error:', error);
     res.status(500).json({ error: 'Error al crear mercado' });
+  }
+});
+
+// POST /api/markets/:id/resolve (admin only — manual resolution)
+router.post('/:id/resolve', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { result } = req.body; // true = YES wins, false = NO wins
+
+    if (result === undefined || result === null) {
+      return res.status(400).json({ error: 'Se requiere "result" (true/false)' });
+    }
+
+    const { data: market, error } = await supabase
+      .from('markets')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error || !market) return res.status(404).json({ error: 'Mercado no encontrado' });
+    if (market.status === 'resolved') return res.status(400).json({ error: 'Mercado ya resuelto' });
+
+    // Import resolveMarketManual
+    const { resolveMarketManual } = require('../services/resolverService.js');
+    await resolveMarketManual(market, !!result);
+
+    res.json({ message: `Mercado resuelto: ${result ? 'SÍ' : 'NO'} gana` });
+  } catch (error) {
+    console.error('Manual resolve error:', error);
+    res.status(500).json({ error: 'Error al resolver mercado' });
   }
 });
 
