@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getMarket, placeBet, getQuote, sellPosition, getPriceHistory } from '../lib/api';
+import { getMarket, placeBet, getQuote, sellPosition, getSellQuote, getPriceHistory } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import OddsBar from '../components/OddsBar';
 import toast from 'react-hot-toast';
@@ -125,10 +125,29 @@ export default function MarketDetail() {
   const [selling, setSelling] = useState(null);
   const [quote, setQuote] = useState(null);
   const [priceHistory, setPriceHistory] = useState([]);
+  const [sellQuotes, setSellQuotes] = useState({});  // { positionId: credits_out }
 
   const countdown = useCountdown(market?.closes_at);
 
   useEffect(() => { fetchMarket(); fetchPriceHistory(); }, [id]);
+
+  // Fetch real sell values for active positions
+  useEffect(() => {
+    if (!market?.user_position?.positions?.length) return;
+    const activePositions = market.user_position.positions.filter(p => p.status === 'active');
+    if (!activePositions.length) return;
+    Promise.all(activePositions.map(async (pos) => {
+      try {
+        const shares = pos.shares || pos.amount;
+        const q = await getSellQuote(id, pos.side, shares);
+        return { id: pos.id, credits_out: q.credits_out };
+      } catch { return null; }
+    })).then(results => {
+      const map = {};
+      results.filter(Boolean).forEach(r => { map[r.id] = r.credits_out; });
+      setSellQuotes(map);
+    });
+  }, [market?.user_position?.positions, market?.yes_liquidity]);
 
   // Fetch quote when amount/side changes
   useEffect(() => {
@@ -373,30 +392,42 @@ export default function MarketDetail() {
               </h3>
 
               {/* P&L Summary */}
-              <div className={`rounded-xl p-4 mb-4 ${up ? 'bg-emerald-500/10 border border-emerald-500/20' : market.user_position.profit_loss < 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-white/5 border border-white/10'}`}>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-400">Valor actual</span>
-                  <span className="text-xl font-black text-white">{market.user_position.current_value?.toLocaleString()} créditos</span>
+              {(() => {
+                // Use real sell quotes if available, otherwise fallback to naive calculation
+                const realValue = Object.keys(sellQuotes).length > 0
+                  ? market.user_position.positions
+                      .filter(p => p.status === 'active')
+                      .reduce((sum, p) => sum + (sellQuotes[p.id] || 0), 0)
+                  : market.user_position.current_value;
+                const realPL = realValue - market.user_position.total_spent;
+                const realUp = realPL > 0;
+                return (
+                <div className={`rounded-xl p-4 mb-4 ${realUp ? 'bg-emerald-500/10 border border-emerald-500/20' : realPL < 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-white/5 border border-white/10'}`}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-gray-400">Valor de venta</span>
+                    <span className="text-xl font-black text-white">{realValue?.toLocaleString(undefined, {maximumFractionDigits: 0})} créditos</span>
+                  </div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-gray-400">Invertido</span>
+                    <span className="text-sm text-gray-300">{market.user_position.total_spent?.toLocaleString()} créditos</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-400">Ganancia/Pérdida</span>
+                    <span className={`text-lg font-bold flex items-center gap-1 ${realUp ? 'text-emerald-400' : realPL < 0 ? 'text-red-400' : 'text-gray-300'}`}>
+                      {realUp ? <ArrowUpRight className="w-4 h-4" /> : realPL < 0 ? <ArrowDownRight className="w-4 h-4" /> : null}
+                      {realPL > 0 ? '+' : ''}{realPL?.toFixed(0)}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-400">Invertido</span>
-                  <span className="text-sm text-gray-300">{market.user_position.total_spent?.toLocaleString()} créditos</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Ganancia/Pérdida</span>
-                  <span className={`text-lg font-bold flex items-center gap-1 ${up ? 'text-emerald-400' : market.user_position.profit_loss < 0 ? 'text-red-400' : 'text-gray-300'}`}>
-                    {up ? <ArrowUpRight className="w-4 h-4" /> : market.user_position.profit_loss < 0 ? <ArrowDownRight className="w-4 h-4" /> : null}
-                    {market.user_position.profit_loss > 0 ? '+' : ''}{market.user_position.profit_loss?.toFixed(0)}
-                  </span>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* Individual positions */}
               <div className="space-y-3">
                 {market.user_position.positions.map((pos) => {
                   const shares = pos.shares || pos.amount;
                   const currentPrice = pos.side === 'YES' ? yesPrice : noPrice;
-                  const currentVal = shares * currentPrice;
+                  const currentVal = sellQuotes[pos.id] != null ? sellQuotes[pos.id] : shares * currentPrice;
                   const posProfit = currentVal - pos.amount;
 
                   return (
