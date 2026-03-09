@@ -81,6 +81,7 @@ export function AuthProvider({ children }) {
       value={{
         user,
         session,
+        token: session?.access_token || null,
         profile,
         loading,
         signIn,
