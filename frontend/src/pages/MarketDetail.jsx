@@ -6,8 +6,9 @@ import OddsBar from '../components/OddsBar';
 import toast from 'react-hot-toast';
 import {
   ArrowLeft, Clock, MapPin, Coins, Loader2, CheckCircle, XCircle,
-  TrendingUp, TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight,
+  TrendingUp, TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight, Wallet,
 } from 'lucide-react';
+import { useWallet } from '../contexts/WalletContext';
 
 const metricLabels = {
   temp_max: 'Temp. Máxima', temp_min: 'Temp. Mínima', temp: 'Temperatura',
@@ -128,6 +129,7 @@ export default function MarketDetail() {
   const [priceHistory, setPriceHistory] = useState([]);
   const [sellQuotes, setSellQuotes] = useState({});  // { positionId: credits_out }
 
+  const { isConnected: walletConnected, tokenBalance } = useWallet() || {};
   const countdown = useCountdown(market?.closes_at);
 
   useEffect(() => { fetchMarket(); fetchPriceHistory(); }, [id]);
@@ -457,7 +459,17 @@ export default function MarketDetail() {
                 {betting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : `Comprar ${quote?.shares?.toFixed(1) || '?'} shares ${side}`}
               </button>
 
-              {profile && <p className="text-xs text-gray-500 text-center mt-3">Balance: {profile.balance_credits.toLocaleString()} créditos</p>}
+              {profile && (
+                <div className="text-xs text-gray-500 text-center mt-3 space-y-1">
+                  <p>Balance: {profile.balance_credits.toLocaleString()} créditos</p>
+                  {walletConnected && parseFloat(tokenBalance) > 0 && (
+                    <p className="flex items-center justify-center gap-1 text-purple-400">
+                      <Wallet className="w-3 h-3" />
+                      {parseFloat(tokenBalance).toLocaleString(undefined, { maximumFractionDigits: 0 })} BETALL
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   Home, Wallet, User, Trophy, LogOut, Menu, X, CloudLightning, Coins,
 } from 'lucide-react';
+import WalletConnect from './WalletConnect';
 
 const navItems = [
   { path: '/', label: 'Mercados', icon: Home },
@@ -131,8 +132,8 @@ export default function Layout({ children }) {
 
             <div className="flex-1" />
 
-            {user && profile && (
-              <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              {user && profile && (
                 <div className="flex items-center gap-2 glass-card px-4 py-2">
                   <Coins className="w-4 h-4 text-yellow-400" />
                   <span className="text-sm font-semibold text-white">
@@ -140,8 +141,9 @@ export default function Layout({ children }) {
                   </span>
                   <span className="text-xs text-gray-400">créditos</span>
                 </div>
-              </div>
-            )}
+              )}
+              <WalletConnect compact />
+            </div>
           </div>
         </header>
 

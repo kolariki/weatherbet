@@ -2,11 +2,15 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getWallet, claimDaily } from '../lib/api';
 import toast from 'react-hot-toast';
-import { Coins, Gift, Clock, ArrowUpRight, ArrowDownRight, Loader2, Sparkles } from 'lucide-react';
+import { Coins, Gift, Clock, ArrowUpRight, ArrowDownRight, Loader2, Sparkles, Wallet as WalletIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import WalletConnect from '../components/WalletConnect';
+import TokenSwap from '../components/TokenSwap';
+import { useWallet } from '../contexts/WalletContext';
 
 export default function Wallet() {
   const { profile, refreshProfile } = useAuth();
+  const walletCtx = useWallet();
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState(false);
@@ -117,6 +121,28 @@ export default function Wallet() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* BETALL Token Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="glass-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <WalletIcon className="w-5 h-5 text-purple-400" />
+              BETALL Token
+            </h3>
+          </div>
+          <WalletConnect />
+          {walletCtx?.isConnected && (
+            <div className="mt-4 bg-white/5 rounded-xl p-4">
+              <p className="text-xs text-gray-400 mb-1">On-chain balance</p>
+              <p className="text-2xl font-bold text-purple-400">
+                {parseFloat(walletCtx.tokenBalance).toLocaleString(undefined, { maximumFractionDigits: 2 })} BETALL
+              </p>
+            </div>
+          )}
+        </div>
+        <TokenSwap />
       </div>
 
       {/* Transaction history */}
