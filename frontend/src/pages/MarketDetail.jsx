@@ -316,10 +316,11 @@ export default function MarketDetail() {
         </div>
 
         {/* Sidebar: Trade + Position */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-1">
+          <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10">
           {/* Trade panel */}
           {isOpen && (
-            <div className="glass-card p-6 sticky top-24">
+            <div className="glass-card p-6">
               <h3 className="text-lg font-bold text-white mb-4">Comprar Shares</h3>
 
               <div className="grid grid-cols-2 gap-3 mb-5">
@@ -487,6 +488,7 @@ export default function MarketDetail() {
               )}
             </div>
           )}
+          </div>{/* close sticky wrapper */}
         </div>
       </div>
     </div>
