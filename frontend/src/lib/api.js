@@ -32,3 +32,7 @@ export const getWallet = () => api('/wallet');
 export const claimDaily = () => api('/wallet/claim-daily', { method: 'POST' });
 export const getProfile = () => api('/profile');
 export const getLeaderboard = () => api('/leaderboard');
+export const getQuote = (marketId, side, amount) => api(`/markets/${marketId}/quote?side=${side}&amount=${amount}`);
+export const getSellQuote = (marketId, side, shares) => api(`/markets/${marketId}/sell-quote?side=${side}&shares=${shares}`);
+export const sellPosition = (marketId, positionId) => api(`/markets/${marketId}/sell`, { method: 'POST', body: { position_id: positionId } });
+export const getPriceHistory = (marketId) => api(`/markets/${marketId}/price-history`);
