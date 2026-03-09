@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00b8d4"/>
+      <stop offset="100%" style="stop-color:#00e5ff"/>
+    </linearGradient>
+    <linearGradient id="arrow" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#ffffff"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square background -->
+  <rect x="16" y="16" width="480" height="480" rx="96" ry="96" fill="url(#bg)"/>
+  <!-- Stylized "B" made of prediction bars -->
+  <!-- Left vertical bar -->
+  <rect x="140" y="120" width="48" height="272" rx="8" fill="white" opacity="0.95"/>
+  <!-- Top horizontal bars (ascending) -->
+  <rect x="204" y="120" width="80" height="48" rx="8" fill="white" opacity="0.9"/>
+  <rect x="204" y="184" width="120" height="48" rx="8" fill="white" opacity="0.85"/>
+  <!-- Middle connector -->
+  <rect x="204" y="248" width="80" height="48" rx="8" fill="white" opacity="0.9"/>
+  <!-- Bottom horizontal bars (ascending more) -->
+  <rect x="204" y="312" width="140" height="48" rx="8" fill="#2ebd85" opacity="0.95"/>
+  <!-- Trend arrow -->
+  <path d="M 370 160 L 370 130 L 340 130" stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>
+  <line x1="280" y1="220" x2="368" y2="132" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+</svg>

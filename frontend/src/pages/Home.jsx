@@ -52,10 +52,10 @@ export default function Home() {
       {/* Hero */}
       <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl font-bold mb-2">
-          <span className="gradient-text">Mercados de Predicción</span>
+          <span className="gradient-text">Mercados de Predicciones</span>
         </h1>
         <p className="text-[#848e9c] text-sm lg:text-base">
-          Apostá sobre política, deportes, crypto, clima y más con créditos o tokens BETALL
+          Predecí el futuro. Ganá por tener razón.
         </p>
       </div>
 

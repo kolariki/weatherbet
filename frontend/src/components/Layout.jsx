@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
-  Home, Wallet, User, Trophy, LogOut, Menu, X, CloudLightning, Coins,
+  Home, Wallet, User, Trophy, LogOut, Menu, X, TrendingUp, Coins,
 } from 'lucide-react';
 import WalletConnect from './WalletConnect';
 
@@ -46,11 +46,11 @@ export default function Layout({ children }) {
         <div className="p-6 border-b border-[#2b3139]">
           <Link to="/" className="flex items-center gap-3" onClick={() => setSidebarOpen(false)}>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center">
-              <CloudLightning className="w-5 h-5 text-white" />
+              <TrendingUp className="w-5 h-5 text-white" />
             </div>
             <div>
               <h1 className="text-lg font-bold gradient-text">BetAll</h1>
-              <p className="text-[10px] text-[#5e6673] -mt-0.5">Mercado de Predicción Climática</p>
+              <p className="text-[10px] text-[#5e6673] -mt-0.5">Mercado de Predicciones</p>
             </div>
           </Link>
         </div>

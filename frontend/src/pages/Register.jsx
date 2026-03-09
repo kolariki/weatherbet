@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
-import { Mail, Lock, User, Loader2, CloudLightning } from 'lucide-react';
+import { Mail, Lock, User, Loader2, TrendingUp } from 'lucide-react';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -43,7 +43,7 @@ export default function Register() {
       <div className="glass-card p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#00b8d4] to-[#00e5ff] flex items-center justify-center mx-auto mb-4">
-            <CloudLightning className="w-8 h-8 text-white" />
+            <TrendingUp className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold gradient-text">Crear Cuenta</h1>
           <p className="text-sm text-[#848e9c] mt-1">Únete a BetAll — recibes 1,000 créditos gratis</p>
