@@ -184,7 +184,7 @@ export default function MarketDetail() {
                 <TrendingUp className="w-4 h-4 text-[#00b8d4]" />
                 Historial de Precios
               </h3>
-              <PriceChart data={priceHistory} height={350} />
+              <PriceChart data={priceHistory} height={typeof window !== 'undefined' && window.innerWidth < 768 ? 220 : 350} />
             </div>
           )}
 
@@ -312,7 +312,7 @@ export default function MarketDetail() {
 
         {/* Sidebar: Trade + Position */}
         <div className="lg:col-span-1">
-          <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7rem)] overflow-y-auto">
+          <div className="lg:sticky lg:top-20 space-y-6 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
           {/* Trade panel */}
           {isOpen && (
             <div className="glass-card p-6">

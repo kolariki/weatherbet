@@ -52,8 +52,8 @@ export default function PriceChart({ data, height = 300 }) {
         secondsVisible: false,
         barSpacing: Math.max(6, Math.min(20, container.clientWidth / data.length)),
       },
-      handleScroll: { vertTouchDrag: false },
-      handleScale: { axisPressedMouseMove: { time: true, price: false } },
+      handleScroll: { vertTouchDrag: false, mouseWheel: true, pressedMouseMove: true },
+      handleScale: { axisPressedMouseMove: { time: true, price: false }, pinch: true },
       width: container.clientWidth,
       height,
     });
