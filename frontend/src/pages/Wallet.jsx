@@ -140,7 +140,7 @@ export default function Wallet() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-white font-medium truncate">{tx.description || config.label}</p>
                     <p className="text-xs text-gray-500">
-                      {new Date(tx.created_at).toLocaleDateString('es-MX', {
+                      {new Date(tx.created_at).toLocaleDateString('es-AR', {
                         day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
                       })}
                     </p>

@@ -106,7 +106,7 @@ export default function MarketCard({ market }) {
       <div className="flex items-center justify-between text-xs text-gray-400 mb-4">
         <span className="flex items-center gap-1">
           <MapPin className="w-3 h-3" />
-          {market.city} 🇲🇽
+          {market.city} {market.country_code === 'AR' ? '🇦🇷' : market.country_code === 'MX' ? '🇲🇽' : '🌍'}
         </span>
         {!isResolved && (
           <span className="flex items-center gap-1">

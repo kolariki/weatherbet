@@ -141,7 +141,7 @@ export default function MarketDetail() {
           <div className="glass-card p-6">
             <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
               <MapPin className="w-4 h-4" />
-              {market.city}, {market.country_code} 🇲🇽
+              {market.city}, {market.country_code} {market.country_code === 'AR' ? '🇦🇷' : market.country_code === 'MX' ? '🇲🇽' : '🌍'}
               {!isResolved && (
                 <>
                   <span className="mx-2">·</span>
@@ -243,7 +243,7 @@ export default function MarketDetail() {
                     </div>
                     <span className="text-gray-300 font-medium">{pos.amount.toLocaleString()} créditos</span>
                     <span className="text-gray-500 text-xs">
-                      {new Date(pos.created_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      {new Date(pos.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                 ))}

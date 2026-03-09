@@ -56,7 +56,7 @@ export default function Profile() {
           <h1 className="text-2xl font-bold text-white">{profile.username}</h1>
           <p className="text-sm text-gray-400">{profile.email}</p>
           <p className="text-xs text-gray-500 mt-1">
-            Miembro desde {new Date(profile.created_at).toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}
+            Miembro desde {new Date(profile.created_at).toLocaleDateString('es-AR', { month: 'long', year: 'numeric' })}
           </p>
         </div>
       </div>
