@@ -146,7 +146,7 @@ export default function MarketDetail() {
           <div className="glass-card p-6">
             <div className="flex items-center gap-2 text-sm text-[#848e9c] mb-3">
               <MapPin className="w-4 h-4" />
-              {market.city}, {market.country_code} {market.country_code === 'AR' ? '🇦🇷' : '🌍'}
+              {market.city ? `${market.city}${market.country_code === 'AR' ? ' 🇦🇷' : ''}` : 'Global'}
               {!isResolved && (<><span className="mx-2">·</span><Clock className="w-4 h-4" />{countdown}</>)}
             </div>
             <h1 className="text-2xl font-bold text-[#eaecef] mb-4">{market.question}</h1>

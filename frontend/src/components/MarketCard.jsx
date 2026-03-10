@@ -131,10 +131,14 @@ export default function MarketCard({ market }) {
 
       {/* City + Countdown */}
       <div className="flex items-center justify-between text-xs text-[#848e9c] mb-4">
-        <span className="flex items-center gap-1">
-          <MapPin className="w-3 h-3" />
-          {market.city} {market.country_code === 'AR' ? '🇦🇷' : market.country_code === 'MX' ? '🇲🇽' : '🌍'}
-        </span>
+        {market.city ? (
+          <span className="flex items-center gap-1">
+            <MapPin className="w-3 h-3" />
+            {market.city} {market.country_code === 'AR' ? '🇦🇷' : market.country_code === 'US' ? '🇺🇸' : ''}
+          </span>
+        ) : (
+          <span className="text-[#5e6673]">Global</span>
+        )}
         {!isResolved && (
           <span className="flex items-center gap-1">
             <Clock className="w-3 h-3" />

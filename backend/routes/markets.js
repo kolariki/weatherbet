@@ -210,6 +210,129 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
+// POST /api/markets/propose — user submits a market idea
+router.post('/propose', requireAuth, async (req, res) => {
+  try {
+    const { question, description, category, closes_in_days } = req.body;
+
+    if (!question || question.length < 10) {
+      return res.status(400).json({ error: 'La pregunta debe tener al menos 10 caracteres' });
+    }
+
+    const closesInDays = parseInt(closes_in_days) || 30;
+    if (closesInDays < 1 || closesInDays > 365) {
+      return res.status(400).json({ error: 'El mercado debe cerrar entre 1 y 365 días' });
+    }
+
+    const { data, error } = await supabase
+      .from('market_proposals')
+      .insert({
+        question,
+        description: description || null,
+        category: category || 'other',
+        closes_in_days: closesInDays,
+        proposed_by: req.user.id,
+        status: 'pending',
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.status(201).json({ message: '¡Propuesta enviada! La revisaremos pronto.', proposal: data });
+  } catch (error) {
+    console.error('Propose market error:', error);
+    res.status(500).json({ error: 'Error al enviar propuesta' });
+  }
+});
+
+// GET /api/markets/proposals — admin: list all proposals
+router.get('/proposals', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.query;
+    let query = supabase
+      .from('market_proposals')
+      .select('*, profiles(username)')
+      .order('created_at', { ascending: false });
+
+    if (status) query = query.eq('status', status);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    res.json(data || []);
+  } catch (error) {
+    console.error('List proposals error:', error);
+    res.status(500).json({ error: 'Error al obtener propuestas' });
+  }
+});
+
+// POST /api/markets/proposals/:id/approve — admin approves and creates market
+router.post('/proposals/:id/approve', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data: proposal, error: fetchErr } = await supabase
+      .from('market_proposals')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchErr || !proposal) return res.status(404).json({ error: 'Propuesta no encontrada' });
+    if (proposal.status !== 'pending') return res.status(400).json({ error: 'Propuesta ya procesada' });
+
+    const now = new Date();
+    const closesAt = new Date(now.getTime() + proposal.closes_in_days * 86400000).toISOString();
+    const resolvesAt = new Date(now.getTime() + (proposal.closes_in_days + 5) * 86400000).toISOString();
+
+    // Create the market
+    const { data: market, error: createErr } = await supabase
+      .from('markets')
+      .insert({
+        question: proposal.question,
+        description: proposal.description,
+        category: proposal.category,
+        resolution_type: 'manual',
+        closes_at: closesAt,
+        resolves_at: resolvesAt,
+        created_by: proposal.proposed_by,
+      })
+      .select()
+      .single();
+
+    if (createErr) throw createErr;
+
+    // Update proposal status
+    await supabase
+      .from('market_proposals')
+      .update({ status: 'approved', market_id: market.id })
+      .eq('id', id);
+
+    res.json({ message: 'Propuesta aprobada y mercado creado', market });
+  } catch (error) {
+    console.error('Approve proposal error:', error);
+    res.status(500).json({ error: 'Error al aprobar propuesta' });
+  }
+});
+
+// POST /api/markets/proposals/:id/reject — admin rejects
+router.post('/proposals/:id/reject', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    const { error } = await supabase
+      .from('market_proposals')
+      .update({ status: 'rejected', reject_reason: reason || null })
+      .eq('id', id)
+      .eq('status', 'pending');
+
+    if (error) throw error;
+    res.json({ message: 'Propuesta rechazada' });
+  } catch (error) {
+    console.error('Reject proposal error:', error);
+    res.status(500).json({ error: 'Error al rechazar propuesta' });
+  }
+});
+
 // POST /api/markets/:id/resolve (admin only — manual resolution)
 router.post('/:id/resolve', requireAuth, requireAdmin, async (req, res) => {
   try {

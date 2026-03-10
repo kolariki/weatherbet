@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { getMarkets } from '../lib/api';
 import MarketCard from '../components/MarketCard';
-import { Loader2, CloudOff, TrendingUp, Clock, Flame, Sparkles } from 'lucide-react';
+import { Loader2, CloudOff, TrendingUp, Clock, Flame, Sparkles, Plus } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import ProposeMarket from '../components/ProposeMarket';
 
 const categories = [
   { key: 'all', label: 'Todos', emoji: '🌐' },
@@ -27,6 +29,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('all');
   const [sort, setSort] = useState('closing');
+  const [showPropose, setShowPropose] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchMarkets();
@@ -54,9 +58,20 @@ export default function Home() {
         <h1 className="text-3xl lg:text-4xl font-bold mb-2">
           <span className="gradient-text">Mercados de Predicciones</span>
         </h1>
-        <p className="text-[#848e9c] text-sm lg:text-base">
-          Predecí el futuro. Ganá por tener razón.
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-[#848e9c] text-sm lg:text-base">
+            Predecí el futuro. Ganá por tener razón.
+          </p>
+          {user && (
+            <button
+              onClick={() => setShowPropose(true)}
+              className="flex items-center gap-2 bg-[#00b8d4] hover:bg-[#00d4f5] text-white text-sm font-bold px-4 py-2 rounded-lg transition-all shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">Proponer mercado</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Filters */}
@@ -119,6 +134,9 @@ export default function Home() {
           ))}
         </div>
       )}
+
+      {/* Propose market modal */}
+      {showPropose && <ProposeMarket onClose={() => setShowPropose(false)} />}
     </div>
   );
 }
