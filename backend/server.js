@@ -5,10 +5,15 @@ const authRoutes = require('./routes/auth.js');
 const marketRoutes = require('./routes/markets.js');
 const betRoutes = require('./routes/bets.js');
 const walletRoutes = require('./routes/wallet.js');
+const stripeRoutes = require('./routes/stripe.js');
+const stripeWebhookRoutes = require('./routes/stripeWebhook.js');
 const { startResolver } = require('./services/resolverService.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Stripe webhook MUST be before express.json() — needs raw body
+app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhookRoutes);
 
 // Middleware
 app.use(cors());
@@ -25,6 +30,7 @@ app.use('/api', authRoutes);
 app.use('/api/markets', marketRoutes);
 app.use('/api/markets', betRoutes);
 app.use('/api/wallet', walletRoutes);
+app.use('/api/stripe', stripeRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -39,6 +45,6 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`⛈️  WeatherBet API running on port ${PORT}`);
+  console.log(`🎯 BetAll API running on port ${PORT}`);
   startResolver();
 });

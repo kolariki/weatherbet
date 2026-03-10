@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getWallet, claimDaily } from '../lib/api';
+import { api, getWallet, claimDaily } from '../lib/api';
 import toast from 'react-hot-toast';
-import { Coins, Gift, Clock, ArrowUpRight, ArrowDownRight, Loader2, Sparkles, Wallet as WalletIcon } from 'lucide-react';
+import { Coins, Gift, Clock, ArrowUpRight, ArrowDownRight, Loader2, Sparkles, Wallet as WalletIcon, CreditCard } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WalletConnect from '../components/WalletConnect';
 import TokenSwap from '../components/TokenSwap';
+import BuyCredits from '../components/BuyCredits';
 import { useWallet } from '../contexts/WalletContext';
+import { useSearchParams } from 'react-router-dom';
 
 export default function Wallet() {
   const { profile, refreshProfile } = useAuth();
@@ -15,6 +17,28 @@ export default function Wallet() {
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState(false);
   const [cooldownText, setCooldownText] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Check for Stripe checkout return
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    if (sessionId) {
+      api(`/stripe/session-status?session_id=${sessionId}`)
+        .then((data) => {
+          if (data.status === 'complete') {
+            toast.success('¡Pago exitoso! Tus créditos fueron acreditados');
+            refreshProfile();
+            fetchWallet();
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          // Clean URL
+          searchParams.delete('session_id');
+          setSearchParams(searchParams, { replace: true });
+        });
+    }
+  }, []);
 
   useEffect(() => {
     fetchWallet();
@@ -76,6 +100,9 @@ export default function Wallet() {
     win: { icon: ArrowUpRight, color: 'text-[#2ebd85]', label: 'Ganancia', prefix: '+' },
     daily_claim: { icon: Gift, color: 'text-[#00b8d4]', label: 'Créditos diarios', prefix: '+' },
     refund: { icon: ArrowUpRight, color: 'text-[#00b8d4]', label: 'Reembolso', prefix: '+' },
+    purchase: { icon: CreditCard, color: 'text-[#2ebd85]', label: 'Compra', prefix: '+' },
+    token_deposit: { icon: ArrowDownRight, color: 'text-[#00b8d4]', label: 'Depósito BETALL', prefix: '+' },
+    token_withdraw: { icon: ArrowUpRight, color: 'text-[#00b8d4]', label: 'Retiro BETALL', prefix: '' },
   };
 
   return (
@@ -121,6 +148,11 @@ export default function Wallet() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Buy Credits */}
+      <div className="glass-card p-6 mb-8">
+        <BuyCredits />
       </div>
 
       {/* BETALL Token Section */}
